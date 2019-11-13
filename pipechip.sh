@@ -47,6 +47,8 @@ echo $WD
 echo NUSAM=$NUSAM
 echo GENOME=$GENOME
 echo ANNOTATION=$ANNOTATION
+echo NUMCHIP=$NUMCHIP
+echo NUMINPUT=$NUMINPUT
 
 I=0
 while [ $I -lt $NUMSAM ]
@@ -59,9 +61,10 @@ done
 
 ##Generate working directory
 
-mkdir $WD 
+mkdir $WD
 
 cd $WD
+
 
 mkdir genome annotation samples results logs
 
@@ -70,48 +73,48 @@ cd samples
 I=1
 while [ $I -le $NUMCHIP ]
 	do
-	mkdir chip$I
+	mkdir chip_$I
 	((I++))
 done
 
 I=1
 while [ $I -le $NUMINPUT ]
         do
-        mkdir input$I
+        mkdir input_$I
         ((I++))
 done
 
 ## Generate genome index
 cd $WD/genome
-cp $GENOME genome.fa 
+wget -O genome.fa.gz $GENOME
+gunzip genome.fa.gz
 
-cd ../annotation 
-cp $ANNOTATION annotation.gtf
-
+cd ../annotation
+wget -O annotation.gtf $ANNOTATION
+gunzip annotation.gtf
 
 cd $WD/genome
 bowtie2-build genome.fa index
 
 
 ## Copy samples
-cd $WD/samples
 
 I=0
 while [ $I -lt $NUMCHIP ]
 do
-	cd chip(($I+1))
+	cd $WD/samples/chip_(($I+1))
 	fastq-dump --split-files ${SAMPLES[$I]}
         mv ${SAMPLES[$I]}_* chip(($I+1)) 
-	cd ..
+	cd
 	((I++))
 done
 
 I=0
 while [ $I -lt $NUMINPUT ]
-do	cd input(($I+1))
+do	cd $WD/samples/input_(($I+1))
         fastq-dump --split-files ${SAMPLES[($I+$NUSAM)]}
 	mv ${SAMPLES[($I+$NUSAM)]}_* input(($I+1))
-	cd ..
+	cd 
         ((I++))
 done
 

@@ -1,11 +1,11 @@
-working_directory: /home/bioqui/tmp/diurnal
+working_directory: /home/bioqui/tmx/chip_seq
 number_of_samples: 4
-genome: /home/bioqui/example_rna_seq_zt2_zt14/chr5.fa
-annotation: /home/bioqui/example_rna_seq_zt2_zt14/chr5.gtf
-sample_1: /home/bioqui/example_rna_seq_zt2_zt14/zt2_chr5_rep1.fastq.gz
-sample_2: /home/bioqui/example_rna_seq_zt2_zt14/zt2_chr5_rep2.fastq.gz
-sample_3: /home/bioqui/example_rna_seq_zt2_zt14/zt14_chr5_rep1.fastq.gz
-sample_4: /home/bioqui/example_rna_seq_zt2_zt14/zt14_chr5_rep2.fastq.gz
+genome: ftp://ftp.ensemblgenomes.org/pub/release-45/plants/fasta/arabidopsis_thaliana/dna/Arabidopsis_thaliana.TAIR10.dna.toplevel.fa.gz
+annotation: ftp://ftp.ensemblgenomes.org/pub/release-45/plants/gtf/arabidopsis_thaliana/Arabidopsis_thaliana.TAIR10.45.gtf.gz
+samples_1: SRR7264104
+samples_2: SRR7264105
+samples_3: SRR7264106
+samples_4: SRR7264107
 chip: 2
 input: 2
 
