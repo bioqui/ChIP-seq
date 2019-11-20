@@ -26,12 +26,13 @@ GENOME=$( grep genome: $PARAMS | awk '{ print $2 }' )
 ANNOTATION=$( grep annotation: $PARAMS | awk ' { print $2 }' )
 NUMCHIP=$( grep chip: $PARAMS | awk ' { print $2 }' )
 NUMINPUT=$( grep input: $PARAMS | awk ' { print $2 }' )
+TEST=$( grep test: $PARAMS | awk ' { print $2 } ' )
 
-SAMPLES=( )
+SAMPLES=()
 
 
 I=0
-while [ $I - lt $NUSAM ]
+while [ $I -lt $NUMSAM ]
 do
 	SAMPLES[$I]=$( grep samples_$(($I + 1)): $PARAMS | awk '{ print $2 }' )
 	((I++))
@@ -44,16 +45,17 @@ done
 echo "Reading paramaters from" $PARAMS
 
 echo $WD
-echo NUSAM=$NUSAM
+echo NUMSAM=$NUMSAM
 echo GENOME=$GENOME
 echo ANNOTATION=$ANNOTATION
 echo NUMCHIP=$NUMCHIP
 echo NUMINPUT=$NUMINPUT
+echo TEST=$TEST
 
 I=0
 while [ $I -lt $NUMSAM ]
 do
-	echo sample_$((I+1)) = ${SAMPLES[$I]}
+	echo sample_$(($I+1)) = ${SAMPLES[$I]}
 	((I++))
 done
 
@@ -61,10 +63,10 @@ done
 
 ##Generate working directory
 
+
 mkdir $WD
 
 cd $WD
-
 
 mkdir genome annotation samples results logs
 
@@ -85,44 +87,69 @@ while [ $I -le $NUMINPUT ]
 done
 
 ## Generate genome index
-cd $WD/genome
-wget -O genome.fa.gz $GENOME
-gunzip genome.fa.gz
+if [ $TEST == "yes" ]
+then
+	cd $WD/genome
+	cp $GENOME genome.fa
 
-cd ../annotation
-wget -O annotation.gtf $ANNOTATION
-gunzip annotation.gtf
+	cd ../annotation
+	cp $ANNOTATION annotation.gtf
 
-cd $WD/genome
-bowtie2-build genome.fa index
+	cd $WD/genome
+	bowtie2-build genome.fa index
 
+elif [ $TEST == "no" ]
+then
+	cd $WD/genome
+	wget -O genome.fa.gz $GENOME
+	gunzip genome.fa.gz
+
+	cd ../annotation
+	wget -O annotation.gtf $ANNOTATION
+	gunzip annotation.gtf
+
+	cd $WD/genome
+	bowtie2-build genome.fa index
+fi
 
 ## Copy samples
 
-I=0
-while [ $I -lt $NUMCHIP ]
-do
-	cd $WD/samples/chip_(($I+1))
-	fastq-dump --split-files ${SAMPLES[$I]}
-        mv ${SAMPLES[$I]}_* chip(($I+1)) 
-	cd
-	((I++))
-done
+cd $WD/samples
 
-I=0
-while [ $I -lt $NUMINPUT ]
-do	cd $WD/samples/input_(($I+1))
-        fastq-dump --split-files ${SAMPLES[($I+$NUSAM)]}
-	mv ${SAMPLES[($I+$NUSAM)]}_* input(($I+1))
-	cd 
-        ((I++))
-done
+if [ $TEST == "yes" ]
+then
+	I=0
+        while [ $I -lt $NUMCHIP ]
+        do
+                cp ${SAMPLES[$I]} chip_$(($I+1))/chip$(($I+1))
+                ((I++))
+        done
 
+        I=0
+        while [ $I -lt $NUMINPUT ]
+        do
+                cp ${SAMPLES[(($I+$NUMCHIP))]} input_$(($I+1))/input$(($I+1))
+                ((I++))
+	done
 
-I=1
-while [ $I -le $NUMSAM ]
-do
-	qsub -N sample$I -o $WD/logs/sample$I rna_seq_sample_procesing.sh $I $WD $NUMSAM 
-	((I++))
-done
+elif [ $TEST = "no" ]
+then
+	I=0
+	while [ $I -lt $NUMCHIP ]
+	do
+		fastq-dump --split-files ${SAMPLES[$I]}
+		mv ${SAMPLES[$I]}_* chip$(($I+1))
+		mv chip$(($I+1)) $WD/samples/chip_$(($I+1))
+		((I++))
+	done
+
+	I=0
+	while [ $I -lt $NUMINPUT ]
+	do
+		fastq-dump --split-files ${SAMPLES[(($I+$NUMCHIP))]}
+		mv ${SAMPLES[(($I+$NUMCHIP))]}_* input$(($I+1))
+		mv input$(($I+1)) $WD/samples/input_$(($I+1))
+		((I++))
+	done
+fi
 

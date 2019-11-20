@@ -1,13 +1,13 @@
 working_directory: /home/bioqui/tmx/chip_seq
-number_of_samples: 4
-genome: ftp://ftp.ensemblgenomes.org/pub/release-45/plants/fasta/arabidopsis_thaliana/dna/Arabidopsis_thaliana.TAIR10.dna.toplevel.fa.gz
-annotation: ftp://ftp.ensemblgenomes.org/pub/release-45/plants/gtf/arabidopsis_thaliana/Arabidopsis_thaliana.TAIR10.45.gtf.gz
-samples_1: SRR7264104
-samples_2: SRR7264105
-samples_3: SRR7264106
-samples_4: SRR7264107
-chip: 2
-input: 2
+number_of_samples: 2
+genome: /home/bioqui/prr5_samples/genome/chromosome1.fa
+annotation: /home/bioqui/prr5_samples/annotation/chromosome1.gtf
+samples_1: /home/bioqui/prr5_samples/samples/chip/chip_prr5_chr1.fastq 
+samples_2: /home/bioqui/prr5_samples/samples/input/input_prr5_chr1.fastq
+chip: 1
+input: 1
+test: yes
+
 
 
 
