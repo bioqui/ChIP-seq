@@ -1,44 +1,37 @@
-## Author: Juan Francisco Alba Valle
-## Contact: juanfav98@gmail.com
+## Author: Juan Francisco Alba Valle & Claudia Muñoz Mesa
+## Contact: juanfav98@gmail.com/ claudiamzs22@gmail.com
 
 #! /bin/bash
 
-## Readin inut parameters
+## Reading input parameters
 
-SAMPLE_ID=$1
+ID=$1
 WD=$2
-NUM_SAM=$3
-SCRIP=$4
+NUMCHIP=$3
+NUMINPUT=$4
+SCRIPT=$5
 
-## Access samples folder
-cd $WD/samples/sample${SAMPLE_ID}
+cd $WD/samples/chip_${ID}
 
-## QC/home/bioqui/sofware/PIPERNA
-fastqc sample${SAMPLE_ID}.fq.gz
 
-## MAPEO
-hisat2 --dta -x $WD/genome/index -U sample${SAMPLE_ID}.fq.gz -S sample${SAMPLE_ID}.sam
-samtools sort -o sample${SAMPLE_ID}.bam sample${SAMPLE_ID}.sam
-rm sample${SAMPLE_ID}.sam
+##No se produce el fastqc --> buscar fallo
+fastqc chip${ID}.fastq
 
-samtools index sample${SAMPLE_ID}.bam
+## Aqui hay también un fallo y por eso no funciona lo siguiente
+bowtie2 -x $WD/genome/index -U chip${ID}.fastq -S chip${ID}.sam
+samtools view -@ 2 -S -b chip${ID}.sam > chip${ID}.bam
+rm chip${ID}.sam
 
-## Transcript assembly
-stringtie -G $WD/annotation/annotation.gtf -o sample${SAMPLE_ID}.gtf -l sample${SAMPLE_ID} sample${SAMPLE_ID}.bam
-
-##Preparing merge list file for transcriptome merging
-stringtie -e -B -G $WD/annotation/annotation.gtf -o sample${SAMPLE_ID}.gtf -l sample${SAMPLE_ID}.bam
-
-## Synchronization point, trough blackboards
-echo "sample${SAMPLE_ID} DONE" >> $WD/logs/blackboard.txt
-
-## Preparing merge list file for transcriptome mergin
-echo $WD/samples/sample${SAMPLE_ID}/sample${SAMPLE_ID}.gtf >> $WD/logs/mergelist.txt
+samtools sort chip${ID}.bam -O chip_sorted${ID}.bam
+samtools index chip_sorted${ID}.bam
 
 DONE_SAMPLES=$(cat $WD/logs/blackboard.txt | grep "DONE" | wc -l)
 
-if [ ${DONE_SAMPLES} -eq ${NUM_SAM} ]
+if [ ${DONE_SAMPLES} -eq ${NUMINPUT} ]
 then
-	qsub -N transcriptome_assambly.sh -o $WD/logs/ensamblado_transcritos $SCRIP/transcriptome_assambly.sh $WD
-	((I++))
+	cd $WD/results
+	macs2 callpeak -t $WD/samples/chip_${ID}/chip_sorted${ID}.sam -c $WD/samples/input_${ID}/input_sorted${ID}.bam -n callpeak${ID} --outdir $WD/results -f BAM
+
 fi
+
+echo "chip${ID} DONE" >> $WD/logs/blackboard.txt

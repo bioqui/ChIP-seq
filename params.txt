@@ -6,6 +6,7 @@ samples_1: /home/bioqui/prr5_samples/samples/chip/chip_prr5_chr1.fastq
 samples_2: /home/bioqui/prr5_samples/samples/input/input_prr5_chr1.fastq
 chip: 1
 input: 1
+script: /home/bioqui/chip-seq/ChIP-seq
 test: yes
 
 

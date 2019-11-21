@@ -5,40 +5,20 @@
 
 ## Readin inut parameters
 
-SAMPLE_ID=$1
+ID=$1
 WD=$2
-NUM_SAM=$3
-SCRIP=$4
+NUMINPUT=$3
 
-## Access samples folder
-cd $WD/samples/sample${SAMPLE_ID}
+cd $WD/samples/input_${ID}
 
-## QC/home/bioqui/sofware/PIPERNA
-fastqc sample${SAMPLE_ID}.fq.gz
+fastqc input${ID}.fastq
 
-## MAPEO
-hisat2 --dta -x $WD/genome/index -U sample${SAMPLE_ID}.fq.gz -S sample${SAMPLE_ID}.sam
-samtools sort -o sample${SAMPLE_ID}.bam sample${SAMPLE_ID}.sam
-rm sample${SAMPLE_ID}.sam
+bowtie2 -x $WD/genome/index -U input${ID}.fastq -S input${ID}.sam
+samtools view -@ 2 -S -b input${ID}.sam > input${ID}.bam
+rm input${ID}.sam
 
-samtools index sample${SAMPLE_ID}.bam
+samtools sort input${ID}.bam -O input_sorted${ID}.bam
+samtools index input_sorted${ID}.bam
 
-## Transcript assembly
-stringtie -G $WD/annotation/annotation.gtf -o sample${SAMPLE_ID}.gtf -l sample${SAMPLE_ID} sample${SAMPLE_ID}.bam
+echo "input${ID} DONE" >> $WD/logs/blackboard.txt
 
-##Preparing merge list file for transcriptome merging
-stringtie -e -B -G $WD/annotation/annotation.gtf -o sample${SAMPLE_ID}.gtf -l sample${SAMPLE_ID}.bam
-
-## Synchronization point, trough blackboards
-echo "sample${SAMPLE_ID} DONE" >> $WD/logs/blackboard.txt
-
-## Preparing merge list file for transcriptome mergin
-echo $WD/samples/sample${SAMPLE_ID}/sample${SAMPLE_ID}.gtf >> $WD/logs/mergelist.txt
-
-DONE_SAMPLES=$(cat $WD/logs/blackboard.txt | grep "DONE" | wc -l)
-
-if [ ${DONE_SAMPLES} -eq ${NUM_SAM} ]
-then
-	qsub -N transcriptome_assambly.sh -o $WD/logs/ensamblado_transcritos $SCRIP/transcriptome_assambly.sh $WD
-	((I++))
-fi

@@ -27,6 +27,7 @@ ANNOTATION=$( grep annotation: $PARAMS | awk ' { print $2 }' )
 NUMCHIP=$( grep chip: $PARAMS | awk ' { print $2 }' )
 NUMINPUT=$( grep input: $PARAMS | awk ' { print $2 }' )
 TEST=$( grep test: $PARAMS | awk ' { print $2 } ' )
+SCRIPT=$( grep script: $PARAMS  | awk ' { print$2 } ' )
 
 SAMPLES=()
 
@@ -153,3 +154,18 @@ then
 	done
 fi
 
+
+
+I=1
+while [ $I -le $NUMINPUT ]
+do 
+	qsub -N input$I -o $WD/logs/input$I $SCRIPT/procesing_input.sh $I $WD $NUMINPUT
+	((I++))
+done
+
+I=1
+while [ $I -le $NUMCHIP ]
+do
+	qsub -N chip$I -o $WD/logs/chip$I $SCRIPT/procesing_chip.sh $I $WD $NUMCHIP $NUMINPUT
+	((I++))
+done
