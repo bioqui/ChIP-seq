@@ -28,6 +28,8 @@ NUMCHIP=$( grep chip: $PARAMS | awk ' { print $2 }' )
 NUMINPUT=$( grep input: $PARAMS | awk ' { print $2 }' )
 TEST=$( grep test: $PARAMS | awk ' { print $2 } ' )
 SCRIPT=$( grep script: $PARAMS  | awk ' { print$2 } ' )
+USUARIO=$( grep usuario: $PARAMS  | awk ' { print$2 } ' )
+
 
 SAMPLES=()
 
@@ -122,14 +124,14 @@ then
 	I=0
         while [ $I -lt $NUMCHIP ]
         do
-                cp ${SAMPLES[$I]} chip_$(($I+1))/chip$(($I+1))
+                cp ${SAMPLES[$I]} chip_$(($I+1))/chip$(($I+1)).fastq
                 ((I++))
         done
 
         I=0
         while [ $I -lt $NUMINPUT ]
         do
-                cp ${SAMPLES[(($I+$NUMCHIP))]} input_$(($I+1))/input$(($I+1))
+                cp ${SAMPLES[(($I+$NUMCHIP))]} input_$(($I+1))/input$(($I+1)).fastq
                 ((I++))
 	done
 
@@ -139,8 +141,8 @@ then
 	while [ $I -lt $NUMCHIP ]
 	do
 		fastq-dump --split-files ${SAMPLES[$I]}
-		mv ${SAMPLES[$I]}_* chip$(($I+1))
-		mv chip$(($I+1)) $WD/samples/chip_$(($I+1))
+		mv ${SAMPLES[$I]}_* chip$(($I+1)).fastq
+		mv chip$(($I+1)).fastq $WD/samples/chip_$(($I+1))
 		((I++))
 	done
 
@@ -148,8 +150,8 @@ then
 	while [ $I -lt $NUMINPUT ]
 	do
 		fastq-dump --split-files ${SAMPLES[(($I+$NUMCHIP))]}
-		mv ${SAMPLES[(($I+$NUMCHIP))]}_* input$(($I+1))
-		mv input$(($I+1)) $WD/samples/input_$(($I+1))
+		mv ${SAMPLES[(($I+$NUMCHIP))]}_* input$(($I+1)).fastq
+		mv input$(($I+1)).fastq $WD/samples/input_$(($I+1))
 		((I++))
 	done
 fi
@@ -159,13 +161,13 @@ fi
 I=1
 while [ $I -le $NUMINPUT ]
 do 
-	qsub -N input$I -o $WD/logs/input$I $SCRIPT/procesing_input.sh $I $WD $NUMINPUT
+	qsub -N input$I -o $WD/logs/input$I $SCRIPT/procesing_input.sh $I $WD $NUMSAM
 	((I++))
 done
 
 I=1
 while [ $I -le $NUMCHIP ]
 do
-	qsub -N chip$I -o $WD/logs/chip$I $SCRIPT/procesing_chip.sh $I $WD $NUMCHIP $NUMINPUT
+	qsub -N chip$I -o $WD/logs/chip$I $SCRIPT/procesing_chip.sh $I $WD $NUMSAM $SCRIPT $USUARIO
 	((I++))
 done
