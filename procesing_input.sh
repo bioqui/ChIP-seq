@@ -1,5 +1,5 @@
-## Author: Juan Francisco Alba Valle
-## Contact: juanfav98@gmail.com
+## Author: Claudia Muñoz Mesa & Juan Francisco Alba Valle
+## Contact: juanfav98@gmail.com/ claudiamzs22@gmail.com
 
 #! /bin/bash
 
