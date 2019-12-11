@@ -28,11 +28,11 @@ NUMCHIP=$( grep chip: $PARAMS | awk ' { print $2 }' )
 NUMINPUT=$( grep input: $PARAMS | awk ' { print $2 }' )
 TEST=$( grep test: $PARAMS | awk ' { print $2 } ' )
 SCRIPT=$( grep script: $PARAMS  | awk ' { print$2 } ' )
-USUARIO=$( grep usuario: $PARAMS  | awk ' { print$2 } ' )
-
+TEST2=$( grep test2: $PARAMS | awk ' { print $2 } ' )
 
 SAMPLES=()
 
+## Create a sample parameter with all information about samples.
 
 I=0
 while [ $I -lt $NUMSAM ]
@@ -54,6 +54,8 @@ echo ANNOTATION=$ANNOTATION
 echo NUMCHIP=$NUMCHIP
 echo NUMINPUT=$NUMINPUT
 echo TEST=$TEST
+echo TEST=$TEST2
+echo SCRIPT=$SCRIPT
 
 I=0
 while [ $I -lt $NUMSAM ]
@@ -66,14 +68,17 @@ done
 
 ##Generate working directory
 
-
 mkdir $WD
 
 cd $WD
 
 mkdir genome annotation samples results logs
 
-cd samples
+cd results
+
+mkdir RSTUDIO HOMER
+
+cd $WD/samples
 
 I=1
 while [ $I -le $NUMCHIP ]
@@ -89,7 +94,8 @@ while [ $I -le $NUMINPUT ]
         ((I++))
 done
 
-## Generate genome index
+## Copy or download genome & Generate genome index.
+
 if [ $TEST == "yes" ]
 then
 	cd $WD/genome
@@ -115,7 +121,7 @@ then
 	bowtie2-build genome.fa index
 fi
 
-## Copy samples
+## Copy or download samples in their correct directory. 
 
 cd $WD/samples
 
@@ -156,18 +162,18 @@ then
 	done
 fi
 
-
+## Uploading processing_input & processing_chip to continue with their analyzes.
 
 I=1
 while [ $I -le $NUMINPUT ]
 do 
-	qsub -N input$I -o $WD/logs/input$I $SCRIPT/procesing_input.sh $I $WD $NUMSAM
+	qsub -N input$I -o $WD/logs/input$I $SCRIPT/procesing_input.sh $I $WD $NUMSAM $SCRIPT $TEST2
 	((I++))
 done
 
 I=1
 while [ $I -le $NUMCHIP ]
 do
-	qsub -N chip$I -o $WD/logs/chip$I $SCRIPT/procesing_chip.sh $I $WD $NUMSAM $SCRIPT $USUARIO
+	qsub -N chip$I -o $WD/logs/chip$I $SCRIPT/procesing_chip.sh $I $WD $NUMSAM $SCRIPT $TEST2
 	((I++))
 done

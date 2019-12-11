@@ -1,5 +1,6 @@
 working_directory: /home/bioqui/tmx/chip_seq
 number_of_samples: 2
+test: yes
 genome: /home/bioqui/prr5_samples/genome/chromosome1.fa
 annotation: /home/bioqui/prr5_samples/annotation/chromosome1.gtf
 samples_1: /home/bioqui/prr5_samples/samples/chip/chip_prr5_chr1.fastq 
@@ -7,8 +8,7 @@ samples_2: /home/bioqui/prr5_samples/samples/input/input_prr5_chr1.fastq
 chip: 1
 input: 1
 script: /home/bioqui/chip-seq/ChIP-seq
-test: yes
-usuario: /home/bioqui/
+test2: yes
 
 
 
