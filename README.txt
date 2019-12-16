@@ -44,7 +44,7 @@
 ##	"org" con la referencia del organismo que esté analizando 
 ##
 ##	Encontrará la información en la página de como rellenar ambos. Los resultados se presentarán en las carpetas HOMER_X
-##	que se generan en la carpeta results.
+##	que se generan en la carpeta results. Los archivos dónde se visualizan los resultados vienen en formato html.
 ##
 ## Análisis de RSTUDIO, este análisis solamente está disponible para aquellos que solo tengan un archivo narrowpeaks, 
 ## y el organismo sea Arabidopsis Thaliana en caso de lo contrario rellenar el parámetro "test2":
