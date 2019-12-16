@@ -11,6 +11,9 @@ WD=$2
 NUMSAM=$3
 SCRIPT=$4
 TEST2=$5
+SIZE=$6
+ORG=$7
+NUMCHIP=$8
 
 ## Quality Analyze  
 
@@ -45,6 +48,17 @@ fi
 
 ## Annotation peaks, analysis GEO & KEGG by script in Rstudio // HOMER Analysis
 
+##HOMER
+
+I=1
+while [ $I -le $NUMCHIP ]
+do
+        cd $WD/results
+
+        findMotifsGenome.pl callpeak${I}_summits.bed $ORG $WD/results/HOMER_${I} -size $SIZE
+	((I++))
+done
+
 
 if [ $TEST2 == "yes" ]
 then
@@ -55,14 +69,8 @@ then
 
 	Rscript RScript.R $WD/results/callpeak1_peaks.narrowPeak $WD/results/RSTUDIO
 
-
-	## HOMER
-
-	cd $WD/results
-
-	findMotifsGenome.pl callpeak1_summits.bed tair10 $WD/results/HOMER -size 60
-
 fi
+
 
 cd 
 

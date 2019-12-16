@@ -29,6 +29,8 @@ NUMINPUT=$( grep input: $PARAMS | awk ' { print $2 }' )
 TEST=$( grep test: $PARAMS | awk ' { print $2 } ' )
 SCRIPT=$( grep script: $PARAMS  | awk ' { print$2 } ' )
 TEST2=$( grep test2: $PARAMS | awk ' { print $2 } ' )
+SIZE=$( grep size: $PARAMS | awk ' { print $2 } ' )
+ORG=$( grep org: $PARAMS | awk ' { print $2 } ' )
 
 SAMPLES=()
 
@@ -54,8 +56,10 @@ echo ANNOTATION=$ANNOTATION
 echo NUMCHIP=$NUMCHIP
 echo NUMINPUT=$NUMINPUT
 echo TEST=$TEST
-echo TEST=$TEST2
+echo TEST2=$TEST2
 echo SCRIPT=$SCRIPT
+echo SIZE=$SIZE
+echo ORG=$ORG
 
 I=0
 while [ $I -lt $NUMSAM ]
@@ -74,9 +78,12 @@ cd $WD
 
 mkdir genome annotation samples results logs
 
-cd results
+if [ $TEST2 == "yes" ]
+then
+	cd results
 
-mkdir RSTUDIO HOMER
+	mkdir RSTUDIO 
+fi
 
 cd $WD/samples
 
@@ -167,13 +174,13 @@ fi
 I=1
 while [ $I -le $NUMINPUT ]
 do 
-	qsub -N input$I -o $WD/logs/input$I $SCRIPT/procesing_input.sh $I $WD $NUMSAM $SCRIPT $TEST2
+	qsub -N input$I -o $WD/logs/input$I $SCRIPT/procesing_input.sh $I $WD $NUMSAM $SCRIPT $TEST2 $SIZE $ORG $NUMCHIP
 	((I++))
 done
 
 I=1
 while [ $I -le $NUMCHIP ]
 do
-	qsub -N chip$I -o $WD/logs/chip$I $SCRIPT/procesing_chip.sh $I $WD $NUMSAM $SCRIPT $TEST2
+	qsub -N chip$I -o $WD/logs/chip$I $SCRIPT/procesing_chip.sh $I $WD $NUMSAM $SCRIPT $TEST2 $SIZE $ORG $NUMCHIP
 	((I++))
 done
