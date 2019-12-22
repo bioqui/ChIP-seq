@@ -64,5 +64,6 @@
 ##	Además del nombre de los target genes en un archivo .txt
 ##
 ##	Los resultados del enriquecimiento KEGG, aparecen en la carpeta RSTUDIO, donde podrá encontrar las imágenes del
-##	enriquecimiento con los nombres de los genes enriquecidos.
-##
+##	enriquecimiento con los nombres de los genes enriquecidos. 
+##	DESTACAR QUE ESTE ANÁLISIS SOLO SALDRÁ PARA LA MUESTRA A COMPARA EN LA TAREA YA QUE EL UNIVERSO DEL ANÁLISIS ES 
+##	EL CROMOSOMA 1, PATA OTRO TIPO DE MUESTRAS DEBERÁ MODIFICARSE RScript.R
