@@ -4,7 +4,7 @@
 ## FIRST OF ALL YOU MUST FILL THE PARAMS ARCHIVE CONSIDERING THAT IT HAS TO BE A GAP BETWEEN “:” AND THE INFORMATION BELONG. 
 ##	In first place, all the archive of this analysis must be saved in a folder. 
 ##	The variable SCRIPT should be filled with the directory`s folder, it will be
-##	the folder where the programme is going to be executed. 
+##	the folder where the programme is going to be executed. (./pipechip params.txt)
 ##	
 ##	The variable working_directory must be filled with the pathway of the directory where you want to save all the results.
 ##
